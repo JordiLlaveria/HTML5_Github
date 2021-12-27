@@ -1,45 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<title>Finding repositories</title>
+  <title>API Github</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-  $(document).ready(function(){
-  $("button").click(function(){
-    var url = "https://api.github.com/users/xxxxxxxx";
-    $.get(url, function(info){
-    $("#name").text(info.nombre)
-    $("#description").text(info.descripcion)
-    $("#followers").text(info.seguidores)
-    $("#link").text(info.link);
-    }, "json" );
-  });
-});
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script>
+    $(document).ready(function(){
+        $("button").click(function(){
+            $('#body').empty();
+            $.ajax({
+                type: 'GET',
+                url: 'https://api.github.com/users/'+$("#Name").val()+'/repos',
+                data: { get_param: 'value' },
+                dataType: 'json',
+                success: function (json) {
+                    var count=0;
+                    $.each(json, function(index, element){
+                        $('#body').append('<tr><td>'+element.name+'</td><td>'+element.description+'</td><td>'+element.stargazers_count+'</td></tr>');
+                        count++;
+                        });
+                    $(".repotable").show(100);
+                },
+                error : function(xhr, status) {
+                    $("#text1").text("Error finding the repository");
+                    $(".repotable").hide();
+                }
+            });
+        });
+    });
 </script>
 </head>
 <body>
-<div class="Finding GitHub repo">
-  <h1 class="text-center">This webpage is going to be used for finding GitHub repos</h1>
-  <form>
-    <div class="Repo name">
-      <label for="usr">Name repo:</label>
-      <input type="text" class="form-control" id="usr">
-    </div>
-  </form>
-  <div class="Buttons">
-    <button type="button" class="btn">Search</button>
-  </div>
+<div class="container-fluid">
+  <h1 class="text-center">Finding Github repos</h1>
+  <p class="text-center">This webpage is going to be used for finding GitHub repos, using Bootstrap and Jquery</p>
+  <label>Enter name of GitHub Repository:</label>
   <div class="row">
-    <div class="col-sm-4">name</div>
-    <div class="col-sm-4">description</div>
-    <div class="col-sm-4s">number of followers</div>
+    <div class="col-sm-4"><input type="text" class="form-control" id="Name"></div>
+    <div class="col-sm-4"><button type="button" class="btn">Show</button></div>
   </div>
+  <h2 id="text1"></h2>
+  <table class="repotable">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Number of Followers</th>
+    </tr>
+    </thead>
+    <tbody id="body">
+    </tbody>
+  </table>
 </div>
 </body>
 </html>
